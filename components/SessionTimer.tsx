@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Timer } from 'lucide-react';
 
 interface SessionTimerProps {
   expiresAt: string;
@@ -31,8 +34,12 @@ export default function SessionTimer({ expiresAt, onExpire }: SessionTimerProps)
   const seconds = remaining % 60;
 
   return (
-    <div className={`text-center font-mono text-lg font-bold ${remaining <= 60 ? 'text-red-500' : 'text-gray-700'}`}>
+    <Badge
+      variant={remaining <= 60 ? 'destructive' : 'secondary'}
+      className={cn('gap-1.5 font-mono tabular-nums')}
+    >
+      <Timer data-icon="inline-start" />
       {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-    </div>
+    </Badge>
   );
 }

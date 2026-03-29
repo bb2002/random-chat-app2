@@ -3,6 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAgora } from './AgoraProvider';
 import { validateMessageLength } from '@/lib/validation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { Send } from 'lucide-react';
 
 interface Message {
   sender: string;
@@ -76,53 +81,65 @@ export default function TextChat({ userName }: TextChatProps) {
     }
   };
 
+  const isOwn = (sender: string) => sender === userName;
+
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex flex-col ${msg.sender === userName ? 'items-end' : 'items-start'}`}
-          >
-            <div className="text-xs text-gray-500 mb-1">
-              <span className="font-semibold">{msg.sender}</span>
-              <span className="ml-2">{new Date(msg.timestamp).toLocaleTimeString()}</span>
-            </div>
+    <div className="flex h-full flex-col">
+      <ScrollArea className="flex-1 p-4">
+        <div className="flex flex-col gap-3">
+          {messages.map((msg, idx) => (
             <div
-              className={`rounded-2xl px-4 py-2 max-w-[80%] ${
-                msg.sender === userName
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
+              key={idx}
+              className={cn(
+                'flex flex-col',
+                isOwn(msg.sender) ? 'items-end' : 'items-start'
+              )}
             >
-              {msg.text}
+              <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="font-medium">{msg.sender}</span>
+                <span>{new Date(msg.timestamp).toLocaleTimeString()}</span>
+              </div>
+              <div
+                className={cn(
+                  'max-w-[80%] rounded-2xl px-4 py-2 text-sm',
+                  isOwn(msg.sender)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-foreground'
+                )}
+              >
+                {msg.text}
+              </div>
             </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
 
       <div className="border-t p-4">
-        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+        {error && (
+          <p className="mb-2 text-sm text-destructive">{error}</p>
+        )}
         <div className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="메시지를 입력하세요..."
             maxLength={1000}
-            className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1"
           />
-          <button
+          <Button
+            size="icon"
             onClick={sendMessage}
             disabled={!input.trim()}
-            className="bg-blue-500 text-white rounded-full px-6 py-2 font-semibold disabled:opacity-50 hover:bg-blue-600 transition"
           >
-            전송
-          </button>
+            <Send />
+          </Button>
         </div>
-        <p className="text-xs text-gray-400 mt-1 text-right">{input.length}/1000</p>
+        <p className="mt-1 text-right text-xs text-muted-foreground">
+          {input.length}/1000
+        </p>
       </div>
     </div>
   );

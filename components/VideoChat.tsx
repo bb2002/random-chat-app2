@@ -7,6 +7,10 @@ import AgoraRTC, {
   IRemoteVideoTrack,
 } from 'agora-rtc-sdk-ng';
 import { useAgora } from './AgoraProvider';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Mic, MicOff, Video, VideoOff } from 'lucide-react';
 
 export default function VideoChat() {
   const { rtcClient } = useAgora();
@@ -27,7 +31,7 @@ export default function VideoChat() {
     async function setupMedia() {
       audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
       videoTrack = await AgoraRTC.createCameraVideoTrack({
-        facingMode: 'user', // 모바일: 전면 카메라 기본
+        facingMode: 'user',
       });
 
       setLocalAudioTrack(audioTrack);
@@ -86,45 +90,53 @@ export default function VideoChat() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
-        <div className="relative bg-black rounded-xl overflow-hidden min-h-[200px]">
-          <div ref={remoteVideoRef} className="w-full h-full" />
+    <div className="flex h-full flex-col">
+      <div className="grid flex-1 grid-cols-1 gap-2 p-2 md:grid-cols-2">
+        {/* Remote video */}
+        <div className="relative overflow-hidden rounded-xl bg-muted">
+          <div ref={remoteVideoRef} className="size-full" />
           {!peerJoined && (
-            <div className="absolute inset-0 flex items-center justify-center text-white">
-              상대방 연결 대기 중...
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">상대방 연결 대기 중...</p>
             </div>
           )}
         </div>
-        <div className="relative bg-gray-900 rounded-xl overflow-hidden min-h-[200px]">
-          <div ref={localVideoRef} className="w-full h-full" />
-          <span className="absolute bottom-2 left-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+
+        {/* Local video */}
+        <div className="relative overflow-hidden rounded-xl bg-muted/60">
+          <div ref={localVideoRef} className="size-full" />
+          <Badge variant="secondary" className="absolute bottom-2 left-2">
             나
-          </span>
+          </Badge>
         </div>
       </div>
 
-      <div className="flex justify-center gap-4 p-4">
-        <button
+      {/* Controls */}
+      <div className="flex justify-center gap-3 border-t p-4">
+        <Button
+          variant={isMuted ? 'destructive' : 'outline'}
+          size="lg"
           onClick={toggleMute}
-          className={`px-5 py-3 rounded-full font-semibold transition-all ${
-            isMuted
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
         >
-          {isMuted ? '🔇 음소거 해제' : '🔊 음소거'}
-        </button>
-        <button
+          {isMuted ? (
+            <MicOff data-icon="inline-start" />
+          ) : (
+            <Mic data-icon="inline-start" />
+          )}
+          {isMuted ? '음소거 해제' : '음소거'}
+        </Button>
+        <Button
+          variant={isCameraOff ? 'destructive' : 'outline'}
+          size="lg"
           onClick={toggleCamera}
-          className={`px-5 py-3 rounded-full font-semibold transition-all ${
-            isCameraOff
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
         >
-          {isCameraOff ? '📷 카메라 켜기' : '📷 카메라 끄기'}
-        </button>
+          {isCameraOff ? (
+            <VideoOff data-icon="inline-start" />
+          ) : (
+            <Video data-icon="inline-start" />
+          )}
+          {isCameraOff ? '카메라 켜기' : '카메라 끄기'}
+        </Button>
       </div>
     </div>
   );

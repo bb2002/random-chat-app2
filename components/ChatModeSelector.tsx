@@ -1,5 +1,8 @@
 'use client';
 
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { MessageSquareText, Mic, Video } from 'lucide-react';
+
 type ChatMode = 'text' | 'voice' | 'video';
 
 interface ChatModeSelectorProps {
@@ -7,31 +10,38 @@ interface ChatModeSelectorProps {
   onSelect: (mode: ChatMode) => void;
 }
 
-const modes: { value: ChatMode; label: string; icon: string; description: string }[] = [
-  { value: 'text', label: '텍스트', icon: '💬', description: '텍스트로 대화하기' },
-  { value: 'voice', label: '음성', icon: '🎤', description: '음성으로 대화하기' },
-  { value: 'video', label: '영상', icon: '📹', description: '영상으로 대화하기' },
+const modes = [
+  { value: 'text' as const, label: '텍스트', icon: MessageSquareText, description: '텍스트로 대화' },
+  { value: 'voice' as const, label: '음성', icon: Mic, description: '음성으로 대화' },
+  { value: 'video' as const, label: '영상', icon: Video, description: '영상으로 대화' },
 ];
 
 export default function ChatModeSelector({ selected, onSelect }: ChatModeSelectorProps) {
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <ToggleGroup
+      value={selected ? [selected] : []}
+      onValueChange={(value) => {
+        // Only keep the latest selection (single-select behavior)
+        const newValues = value.filter((v) => v !== selected);
+        if (newValues.length > 0) {
+          onSelect(newValues[0] as ChatMode);
+        }
+      }}
+      className="grid w-full grid-cols-3 gap-3"
+      spacing={3}
+    >
       {modes.map((mode) => (
-        <button
+        <ToggleGroupItem
           key={mode.value}
-          type="button"
-          onClick={() => onSelect(mode.value)}
-          className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-            selected === mode.value
-              ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-md'
-              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-          }`}
+          value={mode.value}
+          variant="outline"
+          className="flex h-auto flex-col gap-2 rounded-lg px-3 py-4"
         >
-          <span className="text-2xl">{mode.icon}</span>
-          <span className="font-semibold text-sm">{mode.label}</span>
-          <span className="text-xs opacity-70">{mode.description}</span>
-        </button>
+          <mode.icon />
+          <span className="text-xs font-semibold">{mode.label}</span>
+          <span className="text-[10px] text-muted-foreground">{mode.description}</span>
+        </ToggleGroupItem>
       ))}
-    </div>
+    </ToggleGroup>
   );
 }

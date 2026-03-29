@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import AgoraRTC, { IMicrophoneAudioTrack, IRemoteAudioTrack } from 'agora-rtc-sdk-ng';
 import { useAgora } from './AgoraProvider';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Mic, MicOff, AudioLines } from 'lucide-react';
 
 export default function VoiceChat() {
   const { rtcClient } = useAgora();
   const [localAudioTrack, setLocalAudioTrack] = useState<IMicrophoneAudioTrack | null>(null);
-  const [remoteAudioTrack, setRemoteAudioTrack] = useState<IRemoteAudioTrack | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [peerJoined, setPeerJoined] = useState(false);
 
@@ -25,15 +28,12 @@ export default function VoiceChat() {
     const handleUserPublished = async (user: any, mediaType: 'audio' | 'video') => {
       await rtcClient!.subscribe(user, mediaType);
       if (mediaType === 'audio') {
-        const remoteTrack = user.audioTrack as IRemoteAudioTrack;
-        remoteTrack.play();
-        setRemoteAudioTrack(remoteTrack);
+        user.audioTrack?.play();
         setPeerJoined(true);
       }
     };
 
     const handleUserLeft = () => {
-      setRemoteAudioTrack(null);
       setPeerJoined(false);
     };
 
@@ -57,28 +57,30 @@ export default function VoiceChat() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-6">
+    <div className="flex h-full flex-col items-center justify-center gap-8">
       <div className="flex flex-col items-center gap-4">
-        <div className={`w-24 h-24 rounded-full flex items-center justify-center text-4xl ${
-          peerJoined ? 'bg-green-100' : 'bg-gray-100'
-        }`}>
-          🎤
-        </div>
-        <p className="text-gray-600">
+        <Avatar className="size-24">
+          <AvatarFallback className="bg-muted text-4xl">
+            <AudioLines className="size-10 text-muted-foreground" />
+          </AvatarFallback>
+        </Avatar>
+        <Badge variant={peerJoined ? 'default' : 'secondary'}>
           {peerJoined ? '음성 연결됨' : '상대방 연결 대기 중...'}
-        </p>
+        </Badge>
       </div>
 
-      <button
+      <Button
+        variant={isMuted ? 'destructive' : 'outline'}
+        size="lg"
         onClick={toggleMute}
-        className={`px-6 py-3 rounded-full font-semibold transition-all ${
-          isMuted
-            ? 'bg-red-500 text-white hover:bg-red-600'
-            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
       >
-        {isMuted ? '🔇 음소거 해제' : '🔊 음소거'}
-      </button>
+        {isMuted ? (
+          <MicOff data-icon="inline-start" />
+        ) : (
+          <Mic data-icon="inline-start" />
+        )}
+        {isMuted ? '음소거 해제' : '음소거'}
+      </Button>
     </div>
   );
 }

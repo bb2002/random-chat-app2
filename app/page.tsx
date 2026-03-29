@@ -5,6 +5,25 @@ import { useRouter } from 'next/navigation';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import ChatModeSelector from '@/components/ChatModeSelector';
 import { validateUserName } from '@/lib/validation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
+import { Alert } from '@/components/ui/alert';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  FieldGroup,
+  Field,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field';
+import { MessageCircle, AlertCircle } from 'lucide-react';
 
 type ChatMode = 'text' | 'voice' | 'video';
 
@@ -77,65 +96,76 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">랜덤 채팅</h1>
-          <p className="text-gray-500 mt-2">낯선 사람과 7분간 익명으로 대화하세요</p>
-        </div>
-
-        {!turnstileToken && !turnstileError && (
-          <div className="flex justify-center">
-            <TurnstileWidget
-              siteKey={TURNSTILE_SITE_KEY}
-              onSuccess={(token) => setTurnstileToken(token)}
-              onError={() => setTurnstileError(true)}
-            />
+    <main className="flex min-h-screen items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10">
+            <MessageCircle className="size-6 text-primary" />
           </div>
-        )}
+          <CardTitle className="text-2xl">랜덤 채팅</CardTitle>
+          <CardDescription>낯선 사람과 7분간 익명으로 대화하세요</CardDescription>
+        </CardHeader>
 
-        {turnstileError && (
-          <p className="text-red-500 text-center text-sm">
-            봇 검증에 실패했습니다. 페이지를 새로고침해주세요.
-          </p>
-        )}
-
-        {turnstileToken && (
-          <>
-            <div>
-              <label htmlFor="userName" className="block text-sm font-medium text-gray-700 mb-1">
-                이름
-              </label>
-              <input
-                id="userName"
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                maxLength={20}
-                placeholder="이름을 입력하세요 (1-20자)"
-                className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <CardContent>
+          {/* Turnstile */}
+          {!turnstileToken && !turnstileError && (
+            <div className="flex justify-center">
+              <TurnstileWidget
+                siteKey={TURNSTILE_SITE_KEY}
+                onSuccess={(token) => setTurnstileToken(token)}
+                onError={() => setTurnstileError(true)}
               />
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                채팅 방식
-              </label>
-              <ChatModeSelector selected={chatMode} onSelect={setChatMode} />
-            </div>
+          {turnstileError && (
+            <Alert variant="destructive">
+              <AlertCircle data-icon="inline-start" />
+              봇 검증에 실패했습니다. 페이지를 새로고침해주세요.
+            </Alert>
+          )}
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* Form */}
+          {turnstileToken && (
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="userName">이름</FieldLabel>
+                <Input
+                  id="userName"
+                  type="text"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  maxLength={20}
+                  placeholder="이름을 입력하세요 (1-20자)"
+                />
+              </Field>
 
-            <button
+              <Field>
+                <FieldLabel>채팅 방식</FieldLabel>
+                <ChatModeSelector selected={chatMode} onSelect={setChatMode} />
+              </Field>
+
+              {error && (
+                <FieldError>{error}</FieldError>
+              )}
+            </FieldGroup>
+          )}
+        </CardContent>
+
+        {turnstileToken && (
+          <CardFooter>
+            <Button
+              className="w-full"
+              size="lg"
               onClick={handleStart}
               disabled={loading}
-              className="w-full bg-blue-500 text-white rounded-lg py-3 font-semibold hover:bg-blue-600 transition disabled:opacity-50"
             >
+              {loading && <Spinner data-icon="inline-start" />}
               {loading ? '연결 중...' : '시작하기'}
-            </button>
-          </>
+            </Button>
+          </CardFooter>
         )}
-      </div>
+      </Card>
     </main>
   );
 }

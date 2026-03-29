@@ -2,11 +2,22 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
+import { X } from 'lucide-react';
 
 export default function WaitingPage() {
   const router = useRouter();
-  const [dots, setDots] = useState('');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     const queueEntryId = sessionStorage.getItem('queueEntryId');
@@ -15,10 +26,10 @@ export default function WaitingPage() {
       return;
     }
 
-    // Animate dots
-    const dotInterval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
-    }, 500);
+    // Elapsed time counter
+    const timerInterval = setInterval(() => {
+      setElapsed((prev) => prev + 1);
+    }, 1000);
 
     // Poll for match status
     intervalRef.current = setInterval(async () => {
@@ -36,7 +47,7 @@ export default function WaitingPage() {
     }, 2000);
 
     return () => {
-      clearInterval(dotInterval);
+      clearInterval(timerInterval);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [router]);
@@ -51,24 +62,35 @@ export default function WaitingPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center space-y-6">
-        <div className="flex justify-center">
-          <div className="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        </div>
+    <main className="flex min-h-screen items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md text-center">
+        <CardHeader>
+          <div className="mx-auto mb-4">
+            <Spinner className="size-10" />
+          </div>
+          <CardTitle className="text-2xl">매칭 대기 중</CardTitle>
+          <CardDescription>
+            같은 방식을 선택한 상대방을 찾고 있습니다
+          </CardDescription>
+        </CardHeader>
 
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">매칭 대기 중{dots}</h2>
-          <p className="text-gray-500 mt-2">같은 방식을 선택한 상대방을 찾고 있습니다</p>
-        </div>
+        <CardContent>
+          <p className="font-mono text-sm text-muted-foreground tabular-nums">
+            대기 시간: {Math.floor(elapsed / 60)}분 {elapsed % 60}초
+          </p>
+        </CardContent>
 
-        <button
-          onClick={handleCancel}
-          className="w-full border-2 border-gray-300 text-gray-600 rounded-lg py-3 font-semibold hover:bg-gray-50 transition"
-        >
-          취소
-        </button>
-      </div>
+        <CardFooter>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleCancel}
+          >
+            <X data-icon="inline-start" />
+            취소
+          </Button>
+        </CardFooter>
+      </Card>
     </main>
   );
 }

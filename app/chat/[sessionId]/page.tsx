@@ -4,6 +4,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import SessionTimer from '@/components/SessionTimer';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Alert } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { LogOut, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 
 const AgoraProvider = dynamic(() => import('@/components/AgoraProvider'), { ssr: false });
 const TextChat = dynamic(() => import('@/components/TextChat'), { ssr: false });
@@ -20,6 +25,8 @@ interface SessionData {
   chatMode: 'text' | 'voice' | 'video';
   userName: string;
 }
+
+const modeLabels = { text: '텍스트', voice: '음성', video: '영상' } as const;
 
 export default function ChatPage() {
   const params = useParams();
@@ -71,38 +78,43 @@ export default function ChatPage() {
 
   if (!sessionData) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-500">세션 정보를 불러오는 중...</p>
+      <main className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground">세션 정보를 불러오는 중...</p>
       </main>
     );
   }
 
+  const isConnected = connectionState === 'CONNECTED';
+
   return (
-    <main className="h-screen flex flex-col bg-gray-50">
+    <main className="flex h-screen flex-col bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className={`w-2 h-2 rounded-full ${
-            connectionState === 'CONNECTED' ? 'bg-green-500' : 'bg-yellow-500'
-          }`} />
-          <span className="text-sm text-gray-600">
-            {sessionData.chatMode === 'text' ? '텍스트' : sessionData.chatMode === 'voice' ? '음성' : '영상'} 채팅
-          </span>
+      <header className="flex items-center justify-between border-b px-4 py-2">
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1.5">
+            {isConnected ? (
+              <Wifi data-icon="inline-start" className="text-emerald-500" />
+            ) : (
+              <WifiOff data-icon="inline-start" className="text-muted-foreground" />
+            )}
+            {modeLabels[sessionData.chatMode]} 채팅
+          </Badge>
         </div>
+
         <SessionTimer expiresAt={sessionData.expiresAt} onExpire={handleExpire} />
-        <button
-          onClick={handleLeave}
-          className="text-red-500 text-sm font-semibold hover:text-red-600 transition"
-        >
+
+        <Button variant="destructive" size="sm" onClick={handleLeave}>
+          <LogOut data-icon="inline-start" />
           나가기
-        </button>
+        </Button>
       </header>
 
       {/* Peer left notification */}
       {peerLeft && (
-        <div className="bg-yellow-100 text-yellow-800 text-center py-2 text-sm">
+        <Alert variant="destructive" className="mx-4 mt-2">
+          <AlertTriangle data-icon="inline-start" />
           상대방이 나갔습니다. 잠시 후 종료됩니다...
-        </div>
+        </Alert>
       )}
 
       {/* Chat area */}

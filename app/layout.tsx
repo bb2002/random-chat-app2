@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "랜덤 채팅",
   description: "낯선 사람과 7분간 익명으로 대화하세요",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 // Start matchmaker worker on server side (singleton)
@@ -37,7 +36,9 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+        {children}
+      </body>
     </html>
   );
 }
