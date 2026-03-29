@@ -4,7 +4,7 @@ metadata:
   name: randomchat-app-deployment
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: randomchat-app
