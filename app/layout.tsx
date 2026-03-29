@@ -17,15 +17,6 @@ export const metadata: Metadata = {
   description: "낯선 사람과 7분간 익명으로 대화하세요",
 };
 
-// Start matchmaker worker on server side (singleton)
-if (typeof window === 'undefined') {
-  import('@/lib/matchmaker').then(({ startMatchmakerWorker }) => {
-    startMatchmakerWorker();
-  }).catch(() => {
-    // DB not available during build
-  });
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
