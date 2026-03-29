@@ -1,5 +1,7 @@
 import { drizzle } from 'drizzle-orm/mysql2';
 import mysql from 'mysql2/promise';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as schema from './schema';
 
 const pool = mysql.createPool({
@@ -8,6 +10,9 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'random_chat',
+  ssl: {
+    ca: fs.readFileSync(path.resolve(process.cwd(), 'server-ca.pem')),
+  },
 });
 
 export const db = drizzle(pool, { schema, mode: 'default' });

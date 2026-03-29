@@ -1,4 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export default defineConfig({
   schema: './lib/db/schema.ts',
@@ -10,5 +12,8 @@ export default defineConfig({
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'random_chat',
+    ssl: {
+      ca: fs.readFileSync(path.resolve(process.cwd(), 'server-ca.pem')).toString(),
+    },
   },
 });
