@@ -3,7 +3,7 @@ FROM node:20-alpine AS base
 # --- deps ---
 FROM base AS deps
 WORKDIR /app
-COPY package.json package-lock.json .npmrc ./
+COPY server-ca.pem package.json package-lock.json .npmrc ./
 RUN npm ci --legacy-peer-deps
 
 # --- build ---
