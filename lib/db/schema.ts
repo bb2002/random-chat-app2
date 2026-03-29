@@ -3,7 +3,7 @@ import { mysqlTable, varchar, int, timestamp, mysqlEnum } from 'drizzle-orm/mysq
 export const queueEntries = mysqlTable('queue_entries', {
   id: varchar('id', { length: 36 }).primaryKey(),
   userName: varchar('user_name', { length: 20 }).notNull(),
-  chatMode: mysqlEnum('chat_mode', ['text', 'voice', 'video']).notNull(),
+  chatMode: mysqlEnum('chat_mode', ['voice', 'video']).notNull(),
   status: mysqlEnum('status', ['waiting', 'matched', 'cancelled']).notNull().default('waiting'),
   sessionId: varchar('session_id', { length: 36 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -12,7 +12,7 @@ export const queueEntries = mysqlTable('queue_entries', {
 
 export const sessions = mysqlTable('sessions', {
   id: varchar('id', { length: 36 }).primaryKey(),
-  chatMode: mysqlEnum('chat_mode', ['text', 'voice', 'video']).notNull(),
+  chatMode: mysqlEnum('chat_mode', ['voice', 'video']).notNull(),
   user1Name: varchar('user1_name', { length: 20 }).notNull(),
   user2Name: varchar('user2_name', { length: 20 }).notNull(),
   user1QueueId: varchar('user1_queue_id', { length: 36 }).notNull(),

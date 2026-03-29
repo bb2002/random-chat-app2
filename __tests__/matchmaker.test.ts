@@ -86,7 +86,7 @@ describe('Feature: random-chat-app, Matchmaker Properties', () => {
     it('같은 모드의 사용자만 매칭됨', () => {
       fc.assert(
         fc.property(
-          fc.constantFrom('text' as const, 'voice' as const, 'video' as const),
+          fc.constantFrom('voice' as const, 'video' as const),
           fc.string({ minLength: 1, maxLength: 20 }).filter(s => s.trim().length > 0),
           fc.string({ minLength: 1, maxLength: 20 }).filter(s => s.trim().length > 0),
           (mode, name1, name2) => {

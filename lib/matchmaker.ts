@@ -6,10 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 const SESSION_DURATION_SECONDS = 420;
 const POLL_INTERVAL_MS = 2000;
 
-type ChatMode = 'text' | 'voice' | 'video';
+type ChatMode = 'voice' | 'video';
 
 export async function scanAndMatch(): Promise<void> {
-  const modes: ChatMode[] = ['text', 'voice', 'video'];
+  const modes: ChatMode[] = ['voice', 'video'];
 
   for (const mode of modes) {
     const waitingEntries = await db

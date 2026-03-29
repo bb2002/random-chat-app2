@@ -6,7 +6,10 @@
       "Bash(npx create-next-app@latest random-chat-app --yes)",
       "Bash(npm install:*)",
       "Bash(npx vitest:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm test:*)"
     ]
   }
 }

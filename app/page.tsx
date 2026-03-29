@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/field';
 import { MessageCircle, AlertCircle } from 'lucide-react';
 
-type ChatMode = 'text' | 'voice' | 'video';
+type ChatMode = 'voice' | 'video';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -52,18 +52,16 @@ export default function LandingPage() {
       return;
     }
 
-    if (chatMode === 'voice' || chatMode === 'video') {
-      try {
-        const constraints: MediaStreamConstraints = {
-          audio: true,
-          video: chatMode === 'video',
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        stream.getTracks().forEach((track) => track.stop());
-      } catch {
-        setError('미디어 권한이 필요합니다. 브라우저 설정에서 권한을 허용해주세요.');
-        return;
-      }
+    try {
+      const constraints: MediaStreamConstraints = {
+        audio: true,
+        video: chatMode === 'video',
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      stream.getTracks().forEach((track) => track.stop());
+    } catch {
+      setError('미디어 권한이 필요합니다. 브라우저 설정에서 권한을 허용해주세요.');
+      return;
     }
 
     setLoading(true);

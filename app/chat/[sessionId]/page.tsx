@@ -11,7 +11,6 @@ import { Separator } from '@/components/ui/separator';
 import { LogOut, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 
 const AgoraProvider = dynamic(() => import('@/components/AgoraProvider'), { ssr: false });
-const TextChat = dynamic(() => import('@/components/TextChat'), { ssr: false });
 const VoiceChat = dynamic(() => import('@/components/VoiceChat'), { ssr: false });
 const VideoChat = dynamic(() => import('@/components/VideoChat'), { ssr: false });
 
@@ -19,14 +18,13 @@ interface SessionData {
   sessionId: string;
   channelName: string;
   rtcToken: string;
-  rtmToken: string;
   rtcUid: number;
   expiresAt: string;
-  chatMode: 'text' | 'voice' | 'video';
+  chatMode: 'voice' | 'video';
   userName: string;
 }
 
-const modeLabels = { text: '텍스트', voice: '음성', video: '영상' } as const;
+const modeLabels = { voice: '음성', video: '영상' } as const;
 
 export default function ChatPage() {
   const params = useParams();
@@ -122,13 +120,11 @@ export default function ChatPage() {
         <AgoraProvider
           channelName={sessionData.channelName}
           rtcToken={sessionData.rtcToken}
-          rtmToken={sessionData.rtmToken}
           rtcUid={sessionData.rtcUid}
           chatMode={sessionData.chatMode}
           onPeerLeave={handlePeerLeave}
           onConnectionStateChange={setConnectionState}
         >
-          {sessionData.chatMode === 'text' && <TextChat userName={sessionData.userName} />}
           {sessionData.chatMode === 'voice' && <VoiceChat />}
           {sessionData.chatMode === 'video' && <VideoChat />}
         </AgoraProvider>

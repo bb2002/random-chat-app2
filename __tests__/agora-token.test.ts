@@ -6,11 +6,7 @@ vi.mock('agora-token', () => ({
   RtcTokenBuilder: {
     buildTokenWithUid: vi.fn().mockReturnValue('mock-rtc-token'),
   },
-  RtmTokenBuilder: {
-    buildToken: vi.fn().mockReturnValue('mock-rtm-token'),
-  },
   RtcRole: { PUBLISHER: 1 },
-  RtmRole: { Rtm_User: 1 },
 }));
 
 import { generateAgoraTokens, TOKEN_EXPIRY_SECONDS } from '@/lib/agora-token';

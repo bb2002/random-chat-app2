@@ -50,7 +50,6 @@ export async function GET(request: NextRequest) {
       sessionId: session.id,
       channelName: session.id,
       rtcToken: tokens.rtcToken,
-      rtmToken: tokens.rtmToken,
       rtcUid: tokens.rtcUid,
       expiresAt: session.expiresAt.toISOString(),
       chatMode: session.chatMode,

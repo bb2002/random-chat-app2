@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Chat mode validation
-  if (!['text', 'voice', 'video'].includes(chatMode)) {
+  if (!['voice', 'video'].includes(chatMode)) {
     return NextResponse.json({ error: '유효하지 않은 채팅 모드입니다.' }, { status: 400 });
   }
 
