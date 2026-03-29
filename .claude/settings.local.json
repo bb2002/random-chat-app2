@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//private/tmp/next-temp/**)",
+      "Bash(rm -rf random-chat-app)",
+      "Bash(npx create-next-app@latest random-chat-app --yes)",
+      "Bash(npm install:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx next:*)"
+    ]
+  }
+}

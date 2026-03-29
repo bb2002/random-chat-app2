@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1774752972027,
+      "tag": "0000_bright_veda",
+      "breakpoints": true
+    }
+  ]
+}
